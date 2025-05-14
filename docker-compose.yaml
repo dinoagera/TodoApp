@@ -1,0 +1,67 @@
+version: '3.8'
+
+volumes:
+  api_db_data:
+  api_auth_data:
+
+services:
+  service1_db:
+    image: postgres:14
+    restart: always
+    environment:
+      POSTGRES_DB: ${PG_DATABASE_NAME_API}
+      POSTGRES_USER: ${PG_USER_API}
+      POSTGRES_PASSWORD: ${PG_PASSWORD_API}
+    ports:
+      - "${PG_PORT_DB}:5432"  
+    volumes:
+      - api_db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${PG_USER_API}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+  api_db:
+    build:
+      context: ./api-db
+    environment:
+      - DB_HOST=${PG_DB_HOST_API}
+      - DB_PORT=5432
+      - DB_NAME=${PG_DATABASE_NAME_API}
+      - DB_USER=${PG_USER_API}
+      - DB_PASSWORD=${PG_PASSWORD_API}
+      - DB_URL=postgres://${PG_USER_API}:${PG_PASSWORD_API}@${PG_DB_HOST_API}:5432/${PG_DATABASE_NAME_API}?sslmode=disable
+    ports:
+      - "${GRPC_PORT_API_DB}:8081"  
+    depends_on:
+     service1_db:
+        condition: service_healthy
+  api_auth:
+    build:
+      context: ./api-auth
+    environment:
+      - DB_HOST=${PG_DB_HOST_API}
+      - DB_PORT=5432
+      - DB_NAME=${PG_DATABASE_NAME_API}
+      - DB_USER=${PG_USER_API}
+      - DB_PASSWORD=${PG_PASSWORD_API}
+      - DB_URL=postgres://${PG_USER_API}:${PG_PASSWORD_API}@${PG_DB_HOST_API}:5432/${PG_DATABASE_NAME_API}?sslmode=disable
+    ports:
+      - "${GRPC_PORT_API_AUTH}:8082"  
+    depends_on:
+      service1_db:  
+        condition: service_healthy
+  api_gateway:
+    build:
+      context: ./todo-api-service
+    env_file:
+      - ./todo-api-service/.env
+    environment:
+      - SERVER_ADDRESS=${SERVER_ADDRESS}
+      - SERVER_TIMEOUT=${SERVER_TIMEOUT}
+      - SERVER_IDLE_TIMEOUT=${SERVER_IDLE_TIMEOUT}
+    ports:
+      - "8083:8083"
+    depends_on:
+      - api_db
+      - api_auth
