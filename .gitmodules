@@ -1,0 +1,9 @@
+[submodule "TodoAppServiceAuth"]
+	path = TodoAppServiceAuth
+	url = https://github.com/dinoagera/TodoAppServiceAuth
+[submodule "TodoAppServiceDB"]
+	path = TodoAppServiceDB
+	url = https://github.com/dinoagera/TodoAppServiceDB
+[submodule "TodoAppServiceGateway"]
+	path = TodoAppServiceGateway
+	url = https://github.com/dinoagera/TodoAppServiceGateway
