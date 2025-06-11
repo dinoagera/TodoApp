@@ -7,3 +7,6 @@
 [submodule "TodoAppServiceGateway"]
 	path = TodoAppServiceGateway
 	url = https://github.com/dinoagera/TodoAppServiceGateway
+[submodule "TodoAppFrontend"]
+	path = TodoAppFrontend
+	url = https://github.com/dinoagera/TodoAppFrontend
