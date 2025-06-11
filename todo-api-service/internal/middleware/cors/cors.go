@@ -9,8 +9,6 @@ func New() func(next http.Handler) http.Handler {
 			w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
 			w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
 			w.Header().Set("Access-Control-Allow-Credentials", "true")
-
-			// Обрабатываем preflight (OPTIONS)
 			if r.Method == http.MethodOptions {
 				w.WriteHeader(http.StatusOK)
 				return

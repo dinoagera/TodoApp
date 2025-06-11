@@ -35,7 +35,7 @@ func New(log *slog.Logger, login Login) http.HandlerFunc {
 			return
 		}
 		response := struct {
-			Token string
+			Token string `json:"token"`
 		}{
 			Token: token,
 		}
